@@ -135,6 +135,11 @@ void loop() {
     if (which_number_is_being_knobbed > LAST_KNOB) {
       which_number_is_being_knobbed = 1;
     }
+    if (which_number_is_being_knobbed == NUMBER_OF_BEGINNING_GONGS)  myEnc.write(4*Number_of_Beginning_Gongs);
+    if (which_number_is_being_knobbed == BEGINNING_GONG_SPACING)    myEnc.write(4*Beginning_Gong_Spacing);
+    if (which_number_is_being_knobbed == MAIN_TIMER)            myEnc.write(4*main_Timer);
+    if (which_number_is_being_knobbed == NUMBER_OF_ENDGONGS)    myEnc.write(4*Number_of_EndGongs);
+    if (which_number_is_being_knobbed == END_GONG_SPACING)    myEnc.write(4*End_Gong_Spacing);
     delay(250);
   }
 
