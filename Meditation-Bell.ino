@@ -55,7 +55,7 @@ void setup() {
   lcd.print("BG GS MT EG ES  ");
   
   Serial.begin(9600);
-  Serial.println("Encoder Readout:");
+  Serial.println("Set Dial:");
   pinMode(button_pin, INPUT_PULLUP);
 
   pinMode(charge_pin, OUTPUT);
@@ -66,10 +66,10 @@ void setup() {
 }
 
 void loop() {
-  int newDialValue = myEnc.read();
+  int newDialValue = myEnc.read()/4;
   if (newDialValue < 0) {
     newDialValue = 99;
-    myEnc.write(99);
+    myEnc.write(99*4);
   }
 
   if (newDialValue > 99) {
