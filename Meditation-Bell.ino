@@ -67,6 +67,16 @@ void setup() {
 
 void loop() {
   int newDialValue = myEnc.read();
+  if (newDialValue < 0) {
+    newDialValue = 99;
+    myEnc.write(99);
+  }
+
+  if (newDialValue > 99) {
+    newDialValue = 0;
+    myEnc.write(0);
+  }
+
   bool dialChanged = false;
 
   int newButtonValue = digitalRead(button_pin);
