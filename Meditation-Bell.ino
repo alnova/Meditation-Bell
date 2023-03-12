@@ -89,11 +89,20 @@ void loop() {
 
   buttonValue = newButtonValue;
 
+  char lcdtext[40];
   if (dialValue != newDialValue)
   {
     dialChanged = true;
     dialValue = newDialValue;
     Serial.println(dialValue);
+
+    if (which_number_is_being_knobbed == NUMBER_OF_BEGINNING_GONGS)  lcd.setCursor(0, 1);
+    if (which_number_is_being_knobbed == BEGINNING_GONG_SPACING)    lcd.setCursor(3, 1);
+    if (which_number_is_being_knobbed == MAIN_TIMER)            lcd.setCursor(6, 1);
+    if (which_number_is_being_knobbed == NUMBER_OF_ENDGONGS)    lcd.setCursor(9, 1);
+    if (which_number_is_being_knobbed == END_GONG_SPACING)    lcd.setCursor(12, 1);
+    sprintf(lcdtext, "%02d",dialValue);
+    lcd.print(lcdtext);
   }
 
   if (which_number_is_being_knobbed == NUMBER_OF_BEGINNING_GONGS)	Number_of_Beginning_Gongs = dialValue;
@@ -103,7 +112,6 @@ void loop() {
   if (which_number_is_being_knobbed == END_GONG_SPACING)		End_Gong_Spacing = dialValue;
 
   char str[256];
-  char lcdtext[40];
 
   if ((buttonChanged == true) && buttonValue == BUTTON_PRESSED)
   {
