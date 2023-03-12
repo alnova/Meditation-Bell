@@ -52,7 +52,7 @@ Encoder myEnc(enc_0, enc_1);
 void setup() {
 
   lcd.begin(16, 2);
-  lcd.print("alessandra!");
+  lcd.print("BG GS MT EG ES  ");
   
   Serial.begin(9600);
   Serial.println("Encoder Readout:");
@@ -103,9 +103,16 @@ void loop() {
   if (which_number_is_being_knobbed == END_GONG_SPACING)		End_Gong_Spacing = dialValue;
 
   char str[256];
+  char lcdtext[40];
 
   if ((buttonChanged == true) && buttonValue == BUTTON_PRESSED)
   {
+    sprintf(lcdtext, "%02d %02d %02d %02d %02d  ",Number_of_Beginning_Gongs,Beginning_Gong_Spacing,main_Timer,Number_of_EndGongs,End_Gong_Spacing);
+    Serial.print(lcdtext);
+
+    lcd.setCursor(0, 1);
+    lcd.print(lcdtext);
+
     sprintf(str, "dialvalue: %d, "
             "buttvalue: %d, "
             "// knob: %d "
