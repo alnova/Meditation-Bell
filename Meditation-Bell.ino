@@ -12,7 +12,8 @@ fire_pin = 8,
 enc_0 = 9,
 enc_1 = 10,
 en_pin = 11,
-rs_pin = 12;
+rs_pin = 12,
+red_button_pin = 53;
 
 enum {
   BUTTON_PRESSED = 0,
@@ -35,6 +36,7 @@ int Number_of_EndGongs = 1;
 int End_Gong_Spacing = 1;
 
 int blackButtonValue = 0;
+int redButtonValue = 0;
 int dialValue = 0;
 
 int count = 0;
@@ -51,6 +53,7 @@ void setup() {
   Serial.begin(9600);
   Serial.println("Set Dial:");
   pinMode(black_button_pin, INPUT_PULLUP);
+  pinMode(red_button_pin, INPUT_PULLUP);
 
   pinMode(charge_pin, OUTPUT);
   pinMode(fire_pin, OUTPUT);
@@ -131,6 +134,13 @@ void loop() {
     delay(250);
   }
 
+  int newRedButtonValue = digitalRead(red_button_pin);
+  bool redButtonChanged = (redButtonValue != newRedButtonValue);
+  redButtonValue = newRedButtonValue;
+  if ((redButtonChanged == true) && redButtonValue == BUTTON_PRESSED) {
+    Serial.println("you pressed the red button");
+    delay(250);
+  }
 }
 
 
