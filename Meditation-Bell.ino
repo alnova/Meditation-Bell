@@ -1,9 +1,3 @@
-/* Encoder Library - Basic Example
-   http://www.pjrc.com/teensy/td_libs_Encoder.html
-
-   This example code is in the public domain.
-*/
-
 #include <Encoder.h>
 #include <LiquidCrystal.h>
 
@@ -12,7 +6,7 @@ d7_pin = 2,
 d6_pin = 3,
 d5_pin = 4,
 d4_pin = 5,
-button_pin = 6,
+black_button_pin = 6,
 charge_pin = 7,
 fire_pin = 8,
 enc_0 = 9,
@@ -40,7 +34,7 @@ int main_Timer = 1;
 int Number_of_EndGongs = 1;
 int End_Gong_Spacing = 1;
 
-int buttonValue = 0;
+int blackButtonValue = 0;
 int dialValue = 0;
 
 int count = 0;
@@ -56,7 +50,7 @@ void setup() {
   
   Serial.begin(9600);
   Serial.println("Set Dial:");
-  pinMode(button_pin, INPUT_PULLUP);
+  pinMode(black_button_pin, INPUT_PULLUP);
 
   pinMode(charge_pin, OUTPUT);
   pinMode(fire_pin, OUTPUT);
@@ -79,15 +73,15 @@ void loop() {
 
   bool dialChanged = false;
 
-  int newButtonValue = digitalRead(button_pin);
-  bool buttonChanged = false;
+  int newBlackButtonValue = digitalRead(black_button_pin);
+  bool blackButtonChanged = false;
 
-  if (buttonValue != newButtonValue)
+  if (blackButtonValue != newBlackButtonValue)
   {
-    buttonChanged = true;
+    blackButtonChanged = true;
   }
 
-  buttonValue = newButtonValue;
+  blackButtonValue = newBlackButtonValue;
 
   char lcdtext[40];
   if (dialValue != newDialValue)
@@ -102,6 +96,7 @@ void loop() {
     if (which_number_is_being_knobbed == NUMBER_OF_ENDGONGS)    lcd.setCursor(9, 1);
     if (which_number_is_being_knobbed == END_GONG_SPACING)    lcd.setCursor(12, 1);
     sprintf(lcdtext, "%02d",dialValue);
+    lcd.blink();
     lcd.print(lcdtext);
   }
 
@@ -113,7 +108,7 @@ void loop() {
 
   char str[256];
 
-  if ((buttonChanged == true) && buttonValue == BUTTON_PRESSED)
+  if ((blackButtonChanged == true) && blackButtonValue == BUTTON_PRESSED)
   {
     sprintf(lcdtext, "%02d %02d %02d %02d %02d  ",Number_of_Beginning_Gongs,Beginning_Gong_Spacing,main_Timer,Number_of_EndGongs,End_Gong_Spacing);
     Serial.print(lcdtext);
@@ -128,7 +123,7 @@ void loop() {
             "spacing1: %d, "
             "mainTimer: %d, "
             "gongs2: %d, "
-            "spacing2: %d\n", dialValue, buttonValue, which_number_is_being_knobbed, Number_of_Beginning_Gongs, Beginning_Gong_Spacing, main_Timer, Number_of_EndGongs, End_Gong_Spacing);
+            "spacing2: %d\n", dialValue, blackButtonValue, which_number_is_being_knobbed, Number_of_Beginning_Gongs, Beginning_Gong_Spacing, main_Timer, Number_of_EndGongs, End_Gong_Spacing);
     Serial.print(str);
 
     which_number_is_being_knobbed += 1;
@@ -143,6 +138,21 @@ void loop() {
     delay(250);
   }
 
+}
+
+
+void fireGong(int intensity) {
+
+  if (intensity > 2000 || intensity < 1) intensity = 2000;
+
+  digitalWrite(charge_pin, HIGH);   // turn the LED on (HIGH is the voltage level)
+  delay(intensity);                       // wait for a second
+  digitalWrite(fire_pin, HIGH);    // turn the LED off by making the voltage LOW
+  delay(100);
+  digitalWrite(charge_pin, LOW);
+  delay(100);
+  digitalWrite(fire_pin, LOW);
+  delay(100);
 }
 
 void checkLCD() {
