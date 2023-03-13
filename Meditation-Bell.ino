@@ -73,16 +73,6 @@ void loop() {
 
   bool dialChanged = false;
 
-  int newBlackButtonValue = digitalRead(black_button_pin);
-  bool blackButtonChanged = false;
-
-  if (blackButtonValue != newBlackButtonValue)
-  {
-    blackButtonChanged = true;
-  }
-
-  blackButtonValue = newBlackButtonValue;
-
   char lcdtext[40];
   if (dialValue != newDialValue)
   {
@@ -108,6 +98,9 @@ void loop() {
 
   char str[256];
 
+  int newBlackButtonValue = digitalRead(black_button_pin);
+  bool blackButtonChanged = (blackButtonValue != newBlackButtonValue);
+  blackButtonValue = newBlackButtonValue;
   if ((blackButtonChanged == true) && blackButtonValue == BUTTON_PRESSED)
   {
     sprintf(lcdtext, "%02d %02d %02d %02d %02d  ",Number_of_Beginning_Gongs,Beginning_Gong_Spacing,main_Timer,Number_of_EndGongs,End_Gong_Spacing);
