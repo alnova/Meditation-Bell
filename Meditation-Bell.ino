@@ -28,6 +28,8 @@ enum {
 #define LAST_KNOB			5 // same number as last knob
 
 int which_number_is_being_knobbed = 1;
+int mode = 0;
+unsigned long meditationStartTime = 0;
 
 int Number_of_Beginning_Gongs = 1;
 int Beginning_Gong_Spacing = 1;
@@ -138,9 +140,18 @@ void loop() {
   bool redButtonChanged = (redButtonValue != newRedButtonValue);
   redButtonValue = newRedButtonValue;
   if ((redButtonChanged == true) && redButtonValue == BUTTON_PRESSED) {
-    Serial.println("you pressed the red button");
+    if (mode == 0) {
+      meditationStartTime = millis();
+      mode=1;
+    }
+    else if (mode != 0) {
+      mode=0;
+    }
+    Serial.print(mode);
+    Serial.println(" you pressed the red button");
     delay(250);
   }
+
 }
 
 
