@@ -211,7 +211,7 @@ void meditate() {
 
 void fireGong(int chargeTime) {
 
-  if (chargeTime > 2000 || chargeTime < 1) chargeTime = 2000;
+  if (chargeTime > 2000 || chargeTime < 0) chargeTime = 2000;
 
   digitalWrite(charge_pin, HIGH);   // turn the pin on (HIGH is the voltage level)
   delay(chargeTime);
