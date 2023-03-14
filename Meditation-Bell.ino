@@ -142,26 +142,67 @@ void loop() {
   if ((redButtonChanged == true) && redButtonValue == BUTTON_PRESSED) {
     if (mode == 0) {
       meditationStartTime = millis();
-      mode=1;
+      mode = 1;
     }
-    else if (mode != 0) {
+    else {
       mode=0;
     }
     Serial.print(mode);
     Serial.println(" you pressed the red button");
     delay(250);
   }
-
+  if (mode != 0) meditate();//this is the statemachine
 }
 
+void meditate() {
+  if (mode == 1) { // if mode is 1, then based on millis minus starttime, and BG and GS, do the beginning gongs, and when finished, change mode to 2
+    for (int gongNum = 0; gongNum < Number_of_Beginning_Gongs; gongNum++) {
+      unsigned long thisGongTime = gongNum * (Beginning_Gong_Spacing * 1000); // how long after start time this gong should happen
+      while (mode == 1 && (millis() - meditationStartTime < thisGongTime)) { //wait until it's time to do this gong
+        if (digitalRead(red_button_pin) == BUTTON_PRESSED) {
+          mode = 0; // if button gets pressed, abort
+          gongNum = Number_of_Beginning_Gongs; //end the for loop if red button is pressed
+        }
+      }
+      Serial.println("firing gong number "+String(gongNum));
+      fireGong(1000);
+    }
+    if (mode == 1) mode = 2;
+  }
+
+  //if mode is 2 compare millis minus start time with the mainTimer plus amount of time that BG took, and if it's past that time, change mode to 3
+  unsigned long totalBGTime = Number_of_Beginning_Gongs * (Beginning_Gong_Spacing * 1000);
+  unsigned long meditationTime = totalBGTime + (main_Timer * 60000);
+
+  if (mode == 2) {
+    while (mode == 2 && (millis() - meditationStartTime < meditationTime )) { //wait until end of mainTimer time
+      if (digitalRead(red_button_pin) == BUTTON_PRESSED) mode = 0; // if button gets pressed, abort
+    }
+    if (mode == 2) mode = 3;
+  }
+  if (mode == 3) { // if mode is 3, then based on millis minus starttime, and BG and endTime, do the end gongs, and when finished, change mode to 4
+    for (int gongNum = 0; gongNum < Number_of_EndGongs; gongNum++) {
+      unsigned long thisGongTime = gongNum * (End_Gong_Spacing * 1000); // how long after start time this gong should happen
+      while (mode == 3 && (millis() - meditationStartTime < (meditationTime + thisGongTime))) { //wait until it's time to do this gong
+        if (digitalRead(red_button_pin) == BUTTON_PRESSED)  {
+          mode = 0; // if button gets pressed, abort
+          gongNum = Number_of_EndGongs; //end the for loop if red button is pressed
+        }
+      }
+      Serial.println("firing gong number "+String(gongNum));
+      fireGong(1000);
+    }
+    if (mode == 3) mode = 4;
+  }
+}
 
 void fireGong(int intensity) {
 
   if (intensity > 2000 || intensity < 1) intensity = 2000;
 
-  digitalWrite(charge_pin, HIGH);   // turn the LED on (HIGH is the voltage level)
-  delay(intensity);                       // wait for a second
-  digitalWrite(fire_pin, HIGH);    // turn the LED off by making the voltage LOW
+  digitalWrite(charge_pin, HIGH);   // turn the pin on (HIGH is the voltage level)
+  delay(intensity);
+  digitalWrite(fire_pin, HIGH);
   delay(100);
   digitalWrite(charge_pin, LOW);
   delay(100);
