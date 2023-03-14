@@ -197,12 +197,12 @@ void meditate() {
   }
 }
 
-void fireGong(int intensity) {
+void fireGong(int chargeTime) {
 
-  if (intensity > 2000 || intensity < 1) intensity = 2000;
+  if (chargeTime > 2000 || chargeTime < 1) chargeTime = 2000;
 
   digitalWrite(charge_pin, HIGH);   // turn the pin on (HIGH is the voltage level)
-  delay(intensity);
+  delay(chargeTime);
   digitalWrite(fire_pin, HIGH);
   delay(100);
   digitalWrite(charge_pin, LOW);
