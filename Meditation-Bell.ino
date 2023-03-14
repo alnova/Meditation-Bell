@@ -151,7 +151,7 @@ void loop() {
     Serial.println(" you pressed the red button");
     delay(250);
   }
-  if (mode != 0) meditate();//this is the statemachine
+  if (mode != 0) meditate(); //this is the statemachine
 }
 
 void meditate() {
@@ -160,7 +160,7 @@ void meditate() {
       unsigned long thisGongTime = gongNum * (Beginning_Gong_Spacing * 1000); // how long after start time this gong should happen
       while (mode == 1 && (millis() - meditationStartTime < thisGongTime)) { //wait until it's time to do this gong
         if (digitalRead(red_button_pin) == BUTTON_PRESSED) {
-          mode = 0; // if button gets pressed, abort
+          mode = 4; // if button gets pressed, abort
           gongNum = Number_of_Beginning_Gongs; //end the for loop if red button is pressed
         }
       }
@@ -176,7 +176,7 @@ void meditate() {
 
   if (mode == 2) {
     while (mode == 2 && (millis() - meditationStartTime < meditationTime )) { //wait until end of mainTimer time
-      if (digitalRead(red_button_pin) == BUTTON_PRESSED) mode = 0; // if button gets pressed, abort
+      if (digitalRead(red_button_pin) == BUTTON_PRESSED) mode = 4; // if button gets pressed, abort
     }
     if (mode == 2) mode = 3;
   }
@@ -185,7 +185,7 @@ void meditate() {
       unsigned long thisGongTime = gongNum * (End_Gong_Spacing * 1000); // how long after start time this gong should happen
       while (mode == 3 && (millis() - meditationStartTime < (meditationTime + thisGongTime))) { //wait until it's time to do this gong
         if (digitalRead(red_button_pin) == BUTTON_PRESSED)  {
-          mode = 0; // if button gets pressed, abort
+          mode = 4; // if button gets pressed, abort
           gongNum = Number_of_EndGongs; //end the for loop if red button is pressed
         }
       }
