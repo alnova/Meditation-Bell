@@ -25,7 +25,8 @@ enum {
 #define MAIN_TIMER			3
 #define NUMBER_OF_ENDGONGS		4
 #define END_GONG_SPACING		5
-#define LAST_KNOB			5 // same number as last knob
+#define INTENSITY 6
+#define LAST_KNOB			6 // same number as last knob
 
 int which_number_is_being_knobbed = 0;
 int mode = 0;
@@ -51,7 +52,7 @@ Encoder myEnc(enc_0, enc_1);
 void setup() {
 
   lcd.begin(16, 2);
-  lcd.print("BG GS MT EG ES  ");
+  lcd.print("BG GS MT EG ES I");
   
   Serial.begin(9600);
   Serial.println("Set Dial:");
@@ -91,16 +92,25 @@ void loop() {
     if (which_number_is_being_knobbed == MAIN_TIMER)            lcd.setCursor(6, 1);
     if (which_number_is_being_knobbed == NUMBER_OF_ENDGONGS)    lcd.setCursor(9, 1);
     if (which_number_is_being_knobbed == END_GONG_SPACING)    lcd.setCursor(12, 1);
-    sprintf(lcdtext, "%02d",dialValue);
+    if (which_number_is_being_knobbed == INTENSITY)    {
+      lcd.setCursor(15, 1);
+      if (dialValue > 5) {
+        dialValue = 5;
+        myEnc.write(5*4);
+      }
+      sprintf(lcdtext, "%1d",dialValue);
+    } else sprintf(lcdtext, "%02d",dialValue);
     lcd.blink();
     lcd.print(lcdtext);
   }
 
+//depending on what we are knobbing, it updates the variable with the dialValue
   if (which_number_is_being_knobbed == NUMBER_OF_BEGINNING_GONGS)	Number_of_Beginning_Gongs = dialValue;
   if (which_number_is_being_knobbed == BEGINNING_GONG_SPACING)		Beginning_Gong_Spacing = dialValue;
   if (which_number_is_being_knobbed == MAIN_TIMER)			      main_Timer = dialValue;
   if (which_number_is_being_knobbed == NUMBER_OF_ENDGONGS)		Number_of_EndGongs = dialValue;
   if (which_number_is_being_knobbed == END_GONG_SPACING)		End_Gong_Spacing = dialValue;
+  if (which_number_is_being_knobbed == INTENSITY)    intensity = dialValue;
 
   char str[256];
 
@@ -109,7 +119,7 @@ void loop() {
   blackButtonValue = newBlackButtonValue;
   if ((blackButtonChanged == true) && blackButtonValue == BUTTON_PRESSED)
   {
-    sprintf(lcdtext, "%02d %02d %02d %02d %02d  ",Number_of_Beginning_Gongs,Beginning_Gong_Spacing,main_Timer,Number_of_EndGongs,End_Gong_Spacing);
+    sprintf(lcdtext, "%02d %02d %02d %02d %02d %1d",Number_of_Beginning_Gongs,Beginning_Gong_Spacing,main_Timer,Number_of_EndGongs,End_Gong_Spacing,intensity);
     Serial.print(lcdtext);
 
     lcd.setCursor(0, 1);
@@ -122,7 +132,8 @@ void loop() {
             "spacing1: %d, "
             "mainTimer: %d, "
             "gongs2: %d, "
-            "spacing2: %d\n", dialValue, blackButtonValue, which_number_is_being_knobbed, Number_of_Beginning_Gongs, Beginning_Gong_Spacing, main_Timer, Number_of_EndGongs, End_Gong_Spacing);
+            "spacing2: %d, "
+            "intensity: %d, \n", dialValue, blackButtonValue, which_number_is_being_knobbed, Number_of_Beginning_Gongs, Beginning_Gong_Spacing, main_Timer, Number_of_EndGongs, End_Gong_Spacing, intensity);
     Serial.print(str);
 
     which_number_is_being_knobbed += 1;
@@ -134,6 +145,7 @@ void loop() {
     if (which_number_is_being_knobbed == MAIN_TIMER)            myEnc.write(4*main_Timer);
     if (which_number_is_being_knobbed == NUMBER_OF_ENDGONGS)    myEnc.write(4*Number_of_EndGongs);
     if (which_number_is_being_knobbed == END_GONG_SPACING)    myEnc.write(4*End_Gong_Spacing);
+    if (which_number_is_being_knobbed == INTENSITY)    myEnc.write(4*intensity);
     delay(250);
   }
 
@@ -166,7 +178,7 @@ void meditate() {
         }
       }
       Serial.println("firing gong number "+String(gongNum));
-      fireGong(1000);
+      fireGong(intensity*400);
     }
     if (mode == 1) mode = 2;
   }
@@ -191,7 +203,7 @@ void meditate() {
         }
       }
       Serial.println("firing gong number "+String(gongNum));
-      fireGong(1000);
+      fireGong(intensity*400);
     }
     if (mode == 3) mode = 4;
   }
