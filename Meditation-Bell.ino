@@ -126,6 +126,8 @@ void loop() {
     if (which_number_is_being_knobbed == NUMBER_OF_ENDGONGS)    myEnc.write(4*Number_of_EndGongs);
     if (which_number_is_being_knobbed == END_GONG_SPACING)    myEnc.write(4*End_Gong_Spacing);
     if (which_number_is_being_knobbed == INTENSITY)    myEnc.write(4*intensity);
+    dialValue = myEnc.read()/4; // put present dialValue in for the next step
+    updateKnobbedNumber(); // make sure blinking cursor is there
     delay(250);
   }
 
