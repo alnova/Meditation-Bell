@@ -45,6 +45,7 @@ int dialValue = 0;
 
 int count = 0;
 char line2[32];
+char lcdtext[40];
 
 LiquidCrystal lcd(rs_pin, en_pin, d4_pin, d5_pin, d6_pin, d7_pin);
 Encoder myEnc(enc_0, enc_1);
@@ -52,7 +53,7 @@ Encoder myEnc(enc_0, enc_1);
 void setup() {
 
   lcd.begin(16, 2);
-  lcd.print("BG GS MT EG ES I");
+  lcdUpdate();
   
   Serial.begin(9600);
   Serial.println("Set Dial:");
@@ -80,8 +81,7 @@ void loop() {
 
   bool dialChanged = false;
 
-  char lcdtext[40];
-  if (dialValue != newDialValue)
+  if (dialValue != newDialValue && mode == 0) // only do this if we're in mode 0
   {
     dialChanged = true;
     dialValue = newDialValue;
@@ -117,14 +117,9 @@ void loop() {
   int newBlackButtonValue = digitalRead(black_button_pin);
   bool blackButtonChanged = (blackButtonValue != newBlackButtonValue);
   blackButtonValue = newBlackButtonValue;
-  if ((blackButtonChanged == true) && blackButtonValue == BUTTON_PRESSED)
+  if ((blackButtonChanged == true) && blackButtonValue == BUTTON_PRESSED && mode == 0) // only do this if we're in mode 0
   {
-    sprintf(lcdtext, "%02d %02d %02d %02d %02d %1d",Number_of_Beginning_Gongs,Beginning_Gong_Spacing,main_Timer,Number_of_EndGongs,End_Gong_Spacing,intensity);
-    Serial.print(lcdtext);
-
-    lcd.setCursor(0, 1);
-    lcd.print(lcdtext);
-
+    lcdUpdate();
     sprintf(str, "dialvalue: %d, "
             "buttvalue: %d, "
             "// knob: %d "
@@ -155,16 +150,34 @@ void loop() {
   if ((redButtonChanged == true) && redButtonValue == BUTTON_PRESSED) {
     if (mode == 0) {
       meditationStartTime = millis();
+      clearLCD(); // blank display for meditation
+      which_number_is_being_knobbed = 0; // turn off encoder activity
       mode = 1;
     }
     else {
-      mode=0;
+      mode=0; // go back to ready to start premeditating again and adjusting parameters
+      lcdUpdate(); // display parameters on LCD
     }
     Serial.print(mode);
     Serial.println(" you pressed the red button");
     delay(250);
   }
   if (mode != 0) meditate(); //this is the statemachine
+}
+
+void clearLCD() {
+  lcd.setCursor(0, 0);
+  lcd.print("                ");
+  lcd.setCursor(0, 1);
+  lcd.print("                ");
+}
+
+void lcdUpdate() {
+  lcd.setCursor(0, 0); // set cursor position to beginning of 1st line
+  lcd.print("BG GS MT EG ES I");
+  lcd.setCursor(0, 1); // set cursor position to beginning of 2nd line
+  sprintf(lcdtext, "%02d %02d %02d %02d %02d %1d",Number_of_Beginning_Gongs,Beginning_Gong_Spacing,main_Timer,Number_of_EndGongs,End_Gong_Spacing,intensity);
+  lcd.print(lcdtext);
 }
 
 void meditate() {
