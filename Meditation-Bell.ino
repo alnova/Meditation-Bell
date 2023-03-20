@@ -225,6 +225,11 @@ void meditate() {
     }
     if (mode == 3) mode = 4;
   }
+  if (mode == 4) {
+    lcd.setCursor(0, 0);
+    lcd.print("u r enlightened!");
+    mode = 5;
+  }
 }
 
 void fireGong(int chargeTime) {
