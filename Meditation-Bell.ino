@@ -33,10 +33,10 @@ int mode = 0;
 unsigned long meditationStartTime = 0;
 
 int Number_of_Beginning_Gongs = 5;
-int Beginning_Gong_Spacing = 3;
+unsigned long Beginning_Gong_Spacing = 3;
 int main_Timer = 1;
 int Number_of_EndGongs = 5;
-int End_Gong_Spacing = 3;
+unsigned long End_Gong_Spacing = 3;
 int intensity = 1;
 
 int blackButtonValue = 0;
